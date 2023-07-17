@@ -13,7 +13,14 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class AstroStorage extends Command
 {
-
+    protected $proxies = [
+        '112.131.250.105:8639',
+        '112.131.250.105:8640',
+        '112.131.250.105:8641',
+        '112.131.250.105:8642',
+        '112.131.250.105:8643',
+        '112.131.250.105:8644',
+    ];
 
     protected $urls = [
         'https://www.1212.com/luck/aries/20230713.html',
@@ -73,10 +80,12 @@ class AstroStorage extends Command
         $bar->start();
 
         $requests = function ($urls) {
-            foreach ($urls as $url) {
+            foreach ($urls as $i => $url) {
+                $proxyIndex = $i % count($this->proxies);
                 yield new Request('GET', $url, [
                     'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36',
-                    'Accept-Encoding' => 'gzip, deflate, br'
+                    'Accept-Encoding' => 'gzip, deflate, br',
+                    'proxy' => $this->proxies[$proxyIndex]
                 ]);
             }
         };
